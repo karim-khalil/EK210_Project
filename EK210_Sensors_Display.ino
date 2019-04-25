@@ -128,7 +128,7 @@ void loop()
  
   //Heating
   
-  if (Tc > 6100.00)
+  if (Tc >= 38.5)
   {
     digitalWrite(in1, LOW);
     lcd.setCursor(1,4);
