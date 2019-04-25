@@ -124,7 +124,7 @@ void loop()
   
   lcd.setCursor(1,3);
   lcd.print("Temperature: ");
-  lcd.print(Tc);*/
+  lcd.print(Tc);
  
   //Heating
   
