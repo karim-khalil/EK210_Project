@@ -38,7 +38,7 @@ float           CO2Curve[3]  =  {2.602,ZERO_POINT_VOLTAGE,(REACTION_VOLTGAE/(2.6
   ///////////////////////////////////////////////////////////////////////////////
 
   //Relay
-  int in1 = 8;
+  int in1 = 7;
 
 #include "DHT.h"
 #include <Wire.h> 
@@ -62,7 +62,7 @@ void setup()
   pinMode(BOOL_PIN, INPUT);                        //set pin to input
   digitalWrite(BOOL_PIN, HIGH);                    //turn on pullup resistors
 
- 
+  pinMode(in1, OUTPUT);
   dht.begin();
   
   lcd.init();       //initialize the lcd
@@ -83,7 +83,6 @@ void loop()
   {
     lcd.print(F("Failed to read from DHT sensor!"));
     lcd.clear();
-    lcd.setCursor(1,0); 
   }
   
   
@@ -104,10 +103,12 @@ void loop()
   
   
  //Printing to LCD
+  
+  lcd.setCursor(1,0);
   lcd.print("Humidity: "); //print results to lcd 
   lcd.print(h);
   lcd.print(F("%"));
-  
+ 
   lcd.setCursor(1,1);
   lcd.print("CO2: ");
  
@@ -122,27 +123,24 @@ void loop()
  
   lcd.print( " ppm" );
   
-  lcd.setCursor(1,3);
-  lcd.print("Temperature: ");
+  lcd.setCursor(1,2);
+  lcd.print("Temp: ");
   lcd.print(Tc);
+  lcd.print(" Celcius");
  
   //Heating
-  
+  lcd.setCursor(1,3);
   if (Tc >= 38.5)
   {
-    digitalWrite(in1, LOW);
-    lcd.setCursor(1,4);
-    lcd.print("Heater on!");
+    digitalWrite(in1, HIGH);
+    lcd.print("Heater off!");
   }
   else
   {
-    digitalWrite(in1, HIGH);
-    lcd.setCursor(1,4);
-    lcd.print("Heater off!");
+    digitalWrite(in1, LOW);
+    lcd.print("Heater on!");
   }
-  
-  lcd.setCursor(1,0);
- }
+}
 
  /*****************************  MGRead *********************************************
 Input:   mg_pin - analog channel
