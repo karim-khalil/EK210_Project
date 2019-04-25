@@ -16,11 +16,11 @@
 /***********************Software Related Macros************************************/
 #define         READ_SAMPLE_INTERVAL         (50)    //define how many samples you are going to take in normal operation
 #define         READ_SAMPLE_TIMES            (5)     //define the time interval(in milisecond) between each samples in
-#define DHTTYPE DHT22   // DHT 22  (AM2302), AM2321                                                     //normal operation
+#define DHTTYPE DHT11   // DHT 22  (AM2302), AM2321                                                     //normal operation
 
 /**********************Application Related Macros**********************************/
 //These two values differ from sensor to sensor. user should derermine this value.
-#define         ZERO_POINT_VOLTAGE           (0.35) //define the output of the sensor in volts when the concentration of CO2 is 400PPM
+#define         ZERO_POINT_VOLTAGE           (0.6) //define the output of the sensor in volts when the concentration of CO2 is 400PPM
 #define         REACTION_VOLTGAE             (0.030) //define the voltage drop of the sensor when move the sensor from air into 1000ppm CO2
 
 
@@ -87,13 +87,25 @@ void loop()
   
   
   //Temperature
-  Vo = analogRead(ThermistorPin);
-  R2 = R1 * (1023.0 / (float)Vo - 1.0);
-  logR2 = log(R2);
+  float average;
+  average = analogRead(ThermistorPin);
+  average = 1023 / average - 1;
+  average = 10000 / average;
+    
+
+  //R2 = R1 * (1023.0 / (float)Vo - 1.0);
+  /*logR2 = log(R2);
   T = (1.0 / (c1 + c2*logR2 + c3*logR2*logR2*logR2));
-  Tc = T - 273.15;
-  
-  
+  Tc = T - 273.15;*/
+ 
+  float steinhart;
+  steinhart = average / 10000;     // (R/Ro)
+  steinhart = log(steinhart);                  // ln(R/Ro)
+  steinhart /= 3950;                   // 1/B * ln(R/Ro)
+  steinhart += 1.0 / (25 + 273.15); // + (1/To)
+  steinhart = 1.0 / steinhart;                 // Invert
+  steinhart -= 273.15;                         // convert to C
+  Tc = steinhart;
   
   int percentage;
   float volts;
@@ -108,28 +120,14 @@ void loop()
   lcd.print("Humidity: "); //print results to lcd 
   lcd.print(h);
   lcd.print(F("%"));
- 
-  lcd.setCursor(1,1);
-  lcd.print("CO2: ");
- 
-  if (percentage == -1) 
-  {
-   lcd.print( "<400" );
-  } 
-   else 
-  {
-  lcd.print(percentage);
-  }
- 
-  lcd.print( " ppm" );
   
-  lcd.setCursor(1,2);
+  lcd.setCursor(1,1);
   lcd.print("Temp: ");
   lcd.print(Tc);
   lcd.print(" Celcius");
  
   //Heating
-  lcd.setCursor(1,3);
+  lcd.setCursor(1,2);
   if (Tc >= 38.5)
   {
     digitalWrite(in1, HIGH);
