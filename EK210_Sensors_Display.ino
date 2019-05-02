@@ -9,7 +9,7 @@
 #define         MG_PIN                       (A0)     //define which analog input channel you are going to use CO2 Sensor
 #define         BOOL_PIN                     (2)      //digital pinout CO2 Sensor
 #define         DC_GAIN                      (8.5)   //define the DC gain of amplifier
-#define DHTPIN 2    //  Digital pin connected to the DHT sensor
+#define DHTPIN 8    //  Digital pin connected to the DHT sensor
 //#define SERIESRESISTOR 10000    
 //#define THERMISTORPIN A1
 
@@ -94,9 +94,7 @@ void loop()
     
 
   //R2 = R1 * (1023.0 / (float)Vo - 1.0);
-  /*logR2 = log(R2);
-  T = (1.0 / (c1 + c2*logR2 + c3*logR2*logR2*logR2));
-  Tc = T - 273.15;*/
+  
  
   float steinhart;
   steinhart = average / 10000;     // (R/Ro)
